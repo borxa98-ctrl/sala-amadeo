@@ -1,21 +1,21 @@
 {
   "name": "Chef Amadeo Reservas",
   "short_name": "Amadeo Reservas",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fcfbfa",
   "theme_color": "#1e252b",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://chefamadeo.com/wp-content/uploads/2021/04/logo-chef-amadeo-s-p.png",
+      "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/svg+xml"
     },
     {
-      "src": "https://chefamadeo.com/wp-content/uploads/2021/04/logo-chef-amadeo-s-p.png",
+      "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml"
     }
   ]
 }
