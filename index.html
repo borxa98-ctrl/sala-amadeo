@@ -2,188 +2,223 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chef Amadeo - Libro de Sala Digital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas - Chef Amadeo</title>
     
-    <!-- Soporte PWA para hacerlo instalable en la tablet del restaurante -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Amadeo Sala">
-    <link rel="apple-touch-icon" href="https://icons8.com">
-    
-    <link href="https://googleapis.com" rel="stylesheet">
-
     <style>
-        :root {
-            --bg-principal: #f8f9fa; --texto-oscuro: #1e252b; --dorado-elegante: #c5a880;
-            --rojo-suave: #e74c3c; --verde-suave: #2ecc71; --borde-tarjeta: #eaedf1;
-            --color-vip: #9b59b6; 
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: #fcfbfa; 
+            color: #1e252b; 
+            margin: 0; 
+            padding: 0; 
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-principal); color: var(--texto-oscuro); padding: 20px 15px; max-width: 500px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--dorado-elegante); }
-        header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; }
-        header p { font-size: 1rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
-        .seccion-titulo { font-size: 1.4rem; font-weight: 700; margin: 20px 0 10px 0; border-left: 4px solid var(--dorado-elegante); padding-left: 10px; }
-        .lista-reservas { display: flex; flex-direction: column; gap: 16px; }
-        .tarjeta-reserva { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 6px solid #bdc3c7; position: relative; }
-        .tarjeta-reserva.aceptada { border-left-color: var(--verde-suave); }
-        .tarjeta-reserva.rechazada, .tarjeta-reserva.denegada { border-left-color: var(--rojo-suave); }
-        .badge-vip { position: absolute; top: 20px; right: 20px; background: var(--color-vip); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-        .tarjeta-reserva.es-vip { border-left-color: var(--color-vip); background: #fdfaff; }
-        .cliente-nombre { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; width: 80%; }
-        .detalles-linea { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-        .dato-celda { background: #fdfefe; padding: 10px; border-radius: 8px; border: 1px solid var(--borde-tarjeta); font-size: 1rem; font-weight: 600; color: #5a6571; }
-        .bloque-alergia { background: #fff9f0; border: 1px solid #ffeacc; color: #f39c12; padding: 12px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; margin-bottom: 15px; }
-        .bloque-acciones { display: flex; gap: 10px; }
-        .btn-accion { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; color: white; }
-        .btn-aceptar { background-color: var(--verde-suave); }
-        .btn-rechazar { background-color: var(--rojo-suave); }
-        .toast-valoracion { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #12161a; color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-left: 5px solid var(--dorado-elegante); z-index: 10000; display: flex; flex-direction: column; gap: 4px; min-width: 280px; transition: top 0.3s ease-out; }
-        .toast-valoracion.mostrar { top: 20px; }
-        .toast-estrellas { color: #f1c40f; font-size: 1.2rem; font-weight: bold; }
-        .sin-reservas { text-align: center; padding: 40px; color: #7f8c8d; font-size: 1.1rem; }
+        .main-container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 40px 25px;
+            box-sizing: border-box;
+        }
+        .header-brand {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        .header-brand h1 {
+            font-family: serif; 
+            font-size: 28px;
+            letter-spacing: 2px;
+            margin: 0 0 5px 0;
+            color: #1e252b;
+        }
+        .header-brand p {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #718096;
+            margin: 0;
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        .form-group label { 
+            font-weight: bold; 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #2d3748;
+        }
+        .form-control { 
+            width: 100%; 
+            padding: 12px 14px; 
+            box-sizing: border-box; 
+            border-radius: 8px; 
+            border: 1px solid #e2e8f0; 
+            font-size: 15px; 
+            background-color: #f7fafc; 
+            color: #1e252b;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #cbd5e0;
+            background-color: #fff;
+        }
+        .btn-submit { 
+            width: 100%; 
+            padding: 15px; 
+            background: #111417; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 50px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.2s ease;
+        }
+        .btn-submit:hover { 
+            background: #2d3748; 
+        }
+        .btn-submit:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
     </style>
 </head>
-
 <body>
 
-    <div class="toast-valoracion" id="alertaSatisfaccion">
-        <div class="toast-estrellas" id="toastEstrellas">★★★★★</div>
-        <div id="toastTexto" style="font-size: 0.95rem; font-weight: 600;"></div>
-    </div>
+    <div class="main-container">
+        <div class="header-brand">
+            <h1>CHEF AMADEO</h1>
+            <p>ECOSISTEMA DIGITAL · PLAYA DE GANDIA</p>
+        </div>
 
-    <header>
-        <h1>Chef Amadeo</h1>
-        <p>Libro de Sala Digital</p>
-    </header>
+        <form id="reservationForm">
+            <div class="form-group">
+                <label for="nombre">NOMBRE Y APELLIDOS</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Introduce tu nombre completo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">TELÉFONO DE CONTACTO</label>
+                <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="Ej. +34 642570810" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha">FECHA DE LA RESERVA</label>
+                <input type="date" id="fecha" name="fecha" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="hora">HORA DE LLEGADA</label>
+                <select id="hora" name="hora" class="form-control" required>
+                    <option value="" disabled selected hidden>Selecciona una hora...</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                    <option value="22:00">22:00</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="comensales">NÚMERO DE COMENSALES</label>
+                <select id="comensales" name="comensales" class="form-control" required>
+                    <option value="" disabled selected hidden>Selecciona cuántos sois...</option>
+                    <option value="1">1 persona</option>
+                    <option value="2">2 personas</option>
+                    <option value="3">3 personas</option>
+                    <option value="4">4 personas</option>
+                    <option value="5">5 personas</option>
+                    <option value="6">6 personas</option>
+                    <option value="7">7 personas</option>
+                    <option value="8">8 personas</option>
+                    <option value="Más de 8">Más de 8 personas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="arroz">ESPECIALIDAD DE ARROZ / FIDEUÀ A ENCARGAR</label>
+                <select id="arroz" name="arroz" class="form-control">
+                    <option value="Ninguno" selected>No deseo encargar arroz ahora</option>
+                    <optgroup label="Paellas de Carne">
+                        <option value="Paella Valenciana">Paella Valenciana</option>
+                        <option value="Paella de Habas y Alcachofas">Paella de Habas y Alcachofas</option>
+                        <option value="Paella de Pato y Foie">Paella de Pato y Foie</option>
+                        <option value="Paella de Puchero">Paella de Puchero</option>
+                    </optgroup>
+                    <optgroup label="Paellas Marineras">
+                        <option value="Arroz a Banda">Arroz a Banda</option>
+                        <option value="Arroz del Senyoret">Arroz del Senyoret</option>
+                        <option value="Paella Negra">Paella Negra</option>
+                        <option value="Paella de Marisco">Paella de Marisco</option>
+                    </optgroup>
+                </select>
+            </div>
 
-    <div style="display: flex; gap: 10px; margin: 15px 0;">
-        <button id="btnTodos" style="flex: 1; padding: 14px; background: #1e252b; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('todos')">Todas</button>
-        <button id="btnManana" style="flex: 1; padding: 14px; background: white; color: #1e252b; border: 2px solid #eaedf1; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('Almuerzo')">☀️ Mañana</button>
-        <button id="btnNoche" style="flex: 1; padding: 14px; background: white; color: #1e252b; border: 2px solid #eaedf1; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('Cena')">🌙 Noche</button>
-    </div>
-
-    <div class="seccion-titulo">Apartado de Reservas</div>
-    <div class="lista-reservas" id="contenedorReservas">
-        <div class="sin-reservas">Abriendo el libro de reservas digital...</div>
+            <button type="submit" id="btnSubmit" class="btn-submit">Confirmar Reserva</button>
+        </form>
     </div>
 
     <script>
-    // 📢 PON AQUÍ LA URL DE LA WEB APP (IMPLEMENTACIÓN) DE TU GOOGLE SHEETS
-    const AC_SCRIPT_URL = "https://script.google.com/macros/s/TU_ID_DE_DESPLIEGUE/exec"; 
-    
-    let todasLasReservas = [];
-    let temporizadorConsulta = null;
-    let filtroActual = 'todos';
+        // 📢 IMPORTANTE: REEMPLAZA ESTA URL POR LA DE TU WEB APP AL IMPLEMENTAR EN GOOGLE
+        const URL_WEB_APP = https://script.google.com/macros/s/AKfycbzOmG3Avr4GFD0HAK_1Z5TJLHgr2rA9xN8hl4-oa1f3W9_rxZi6OQ6YcPDStoDJJ6GX/exec; 
 
-    async function obtenerReservas() {
-        try {
-            // Llama a la función doGet de tu Sheets pasando la acción correspondiente
-            const respuesta = await fetch(AC_SCRIPT_URL + "?action=leerReservas");
-            todasLasReservas = await respuesta.json();
-            aplicarFiltroYRenderizar();
-        } catch (error) {
-            console.error("Error conectando con la API de Sheets:", error);
-            if (todasLasReservas.length === 0) {
-                // Datos de prueba locales por si falla el internet momentáneamente
-                todasLasReservas = [
-                    { id: 2, nombre: "Familia Martí (Offline)", telefono: "642570810", comensales: 6, fecha: "06/07/2026", hora: "14:00", alergias: "1 Celíaco", tipoSolicitud: "VIP", estado: "Pendiente" }
-                ];
-                aplicarFiltroYRenderizar();
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = "PROCESANDO...";
+
+            var datosFormulario = {
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                fecha: document.getElementById('fecha').value,
+                hora: document.getElementById('hora').value,
+                comensales: document.getElementById('comensales').value,
+                arroz: document.getElementById('arroz').value,
+                alergias: "Ninguna",
+                espera: "Pendiente"
+            };
+
+            var formData = [];
+            for (var key in datosFormulario) {
+                formData.push(encodeURIComponent(key) + "=" + encodeURIComponent(datosFormulario[key]));
             }
-        }
-    }
+            var bodyData = formData.join("&");
 
-    function aplicarFiltroYRenderizar() {
-        if (filtroActual === 'todos') { 
-            renderizarReservas(todasLasReservas); 
-        } else {
-            renderizarReservas(todasLasReservas.filter(function(r) {
-                if(!r.hora) return false;
-                var h = parseInt(r.hora.split(':')[0]);
-                return (filtroActual === 'Almuerzo' && h < 17) || (filtroActual === 'Cena' && h >= 17);
-            }));
-        }
-    }
-
-    function renderizarReservas(datos) {
-        const contenedor = document.getElementById('contenedorReservas');
-        if (!contenedor) return;
-        if (datos.length === 0) { contenedor.innerHTML = '<div class="sin-reservas">No hay mesas agendadas.</div>'; return; }
-        
-        let html = '';
-        for (var i = 0; i < datos.length; i++) {
-            var r = datos[i];
-            var alertaAlergias = (r.alergias && r.alergias.toLowerCase() !== 'ninguna' && r.alergias.trim() !== '') ? '<div class="bloque-alergia">⚠️ NOTA/ALERGIAS: ' + r.alergias + '</div>' : '';
-            var vip = (r.esVip || String(r.tipoSolicitud).toLowerCase().includes("vip")) ? '<span class="badge-vip">⭐ VIP</span>' : '';
-            var claseVip = vip ? 'es-vip' : '';
-            
-            var estadoFormateado = String(r.estado).toLowerCase();
-            
-            var botones = (!r.estado || r.estado === 'Pendiente' || r.estado === '') ? 
-                '<button class="btn-accion btn-aceptar" onclick="cambiarEstadoMesa(' + r.id + ', \'Aceptada\')">Aceptar</button>' +
-                '<button class="btn-accion btn-rechazar" onclick="cambiarEstadoMesa(' + r.id + ', \'Rechazada\')">Denegar</button>' :
-                '<div style="text-align:center; font-weight:700; color:#c5a880; width:100%; text-transform:uppercase;">✔ ' + r.estado + '</div>';
-            
-            html += '<div class="tarjeta-reserva ' + estadoFormateado + ' ' + claseVip + '" id="reserva-' + r.id + '">' + vip +
-                        '<div class="cliente-nombre">' + r.nombre + '</div>' +
-                        '<div class="detalles-linea"><div class="dato-celda">📅 ' + r.fecha + '</div><div class="dato-celda">⏰ ' + r.hora + ' h</div></div>' +
-                        '<div class="detalles-linea" style="grid-template-columns:1fr;"><div class="dato-celda">👥 ' + r.comensales + ' personas</div></div>' +
-                        alertaAlergias + '<div class="bloque-acciones" id="acciones-' + r.id + '">' + botones + '</div>' +
-                    '</div>';
-        }
-        contenedor.innerHTML = html;
-    }
-
-    function cambiarEstadoMesa(id, estado) {
-        document.getElementById('reserva-' + id).className = 'tarjeta-reserva ' + estado.toLowerCase();
-        document.getElementById('acciones-' + id).innerHTML = '<div style="text-align:center; font-weight:700; color:#c5a880; width:100%;">Actualizando hoja...</div>';
-        
-        // Petición POST externa hacia la Web App del Google Sheets
-        fetch(AC_SCRIPT_URL + '?action=actualizarEstado&id=' + id + '&estado=' + estado, { method: 'POST', mode: 'no-cors' })
-        .then(function() {
-            document.getElementById('acciones-' + id).innerHTML = '<div style="text-align:center; font-weight:700; color:#c5a880; width:100%;">✔ ' + estado + '</div>';
-            setTimeout(obtenerReservas, 1500); // Recarga para verificar cambios
-        })
-        .catch(function(err) {
-            console.error("Error al actualizar:", err);
-            alert("No se pudo conectar con el libro de reservas.");
-            obtenerReservas();
+            fetch(URL_WEB_APP, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: bodyData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(resultado) {
+                if (resultado.exito) {
+                    alert("¡Reserva solicitada con éxito en Chef Amadeo!");
+                    document.getElementById('reservationForm').reset();
+                } else {
+                    alert("Hubo un problema: " + resultado.mensaje);
+                }
+            })
+            .catch(function(error) {
+                console.error("Error en la petición:", error);
+                alert("Reserva enviada directamente al libro. Verifique con el restaurante para reconfirmar su mesa.");
+            })
+            .finally(function() {
+                btn.disabled = false;
+                btn.innerText = "Confirmar Reserva";
+            });
         });
-    }
-
-    function lanzarNotificacionValoracion(nombre, estrellas) {
-        var caja = document.getElementById('alertaSatisfaccion'); var str = '';
-        for (var i = 0; i < estrellas; i++) { str += '★'; }
-        document.getElementById('toastEstrellas').textContent = str;
-        document.getElementById('toastTexto').innerHTML = 'Mesa de <strong>' + nombre + '</strong> ha valorado el servicio.';
-        caja.classList.add('mostrar'); setTimeout(function() { caja.classList.remove('mostrar'); }, 5000);
-    }
-
-    function filtrarTurno(turnoSeleccionado) {
-        filtroActual = turnoSeleccionado;
-        var btnTodos = document.getElementById('btnTodos'); var btnManana = document.getElementById('btnManana'); var btnNoche = document.getElementById('btnNoche');
-        var est = { background: 'white', color: '#1e252b', border: '2px solid #eaedf1' };
-        Object.assign(btnTodos.style, est); Object.assign(btnManana.style, est); Object.assign(btnNoche.style, est);
-        
-        if (turnoSeleccionado === 'todos') { btnTodos.style.background = '#1e252b'; btnTodos.style.color = 'white'; btnTodos.style.border = 'none'; }
-        else if (turnoSeleccionado === 'Almuerzo') { btnManana.style.background = '#1e252b'; btnManana.style.color = 'white'; btnManana.style.border = 'none'; }
-        else if (turnoSeleccionado === 'Cena') { btnNoche.style.background = '#1e252b'; btnNoche.style.color = 'white'; btnNoche.style.border = 'none'; }
-
-        aplicarFiltroYRenderizar();
-    }
-
-    function gestionarCicloVidaApp() {
-        if (document.hidden) { clearInterval(temporizadorConsulta); } 
-        else { obtenerReservas(); temporizadorConsulta = setInterval(obtenerReservas, 30000); }
-    }
-    document.addEventListener("visibilitychange", gestionarCicloVidaApp);
-
-    obtenerReservas();
-    temporizadorConsulta = setInterval(obtenerReservas, 30000);
-    
-    setTimeout(function() { lanzarNotificacionValoracion("Xavier Frasquet", 5); }, 4000);
-</script>
+    </script>
 </body>
 </html>
