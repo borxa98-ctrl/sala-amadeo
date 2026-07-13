@@ -21,12 +21,15 @@
         .btn-refresh { background: #111417; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .grid-reservas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #e4e6eb; position: relative; transition: transform 0.2s; }
-        .card.Pendiente { border-left-color: #f59e0b; }
-        .card.Aceptada { border-left-color: #10b981; background-color: #f0fdf4; }
-        .card.Rechazada { border-left-color: #ef4444; background-color: #fef2f2; opacity: 0.7; }
+        
+        /* Colores dinámicos según el estado exacto de la tabla */
+        .card.Pendiente, .card.pendiente { border-left-color: #f59e0b; }
+        .card.Aceptada, .card.aceptada, .card.ACEPTADA { border-left-color: #10b981; background-color: #f0fdf4; }
+        .card.Rechazada, .card.rechazada, .card.RECHAZADA { border-left-color: #ef4444; background-color: #fef2f2; opacity: 0.7; }
+        
         .card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
         .pax { font-size: 18px; font-weight: bold; background: #e4e6eb; padding: 4px 10px; border-radius: 20px; }
-        .card.Aceptada .pax { background: #bbf7d0; color: #14532d; }
+        .card.Aceptada .pax, .card.aceptada .pax, .card.ACEPTADA .pax { background: #bbf7d0; color: #14532d; }
         .hora { font-size: 20px; font-weight: bold; color: #111417; }
         .nombre { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; }
         .telefono { font-size: 14px; color: #65676b; margin-bottom: 12px; }
@@ -36,8 +39,8 @@
         .btn-accept { background: #10b981; color: white; }
         .btn-reject { background: #ef4444; color: white; }
         .status-badge { text-align: center; font-weight: bold; text-transform: uppercase; font-size: 12px; padding: 8px; border-radius: 6px; }
-        .status-badge.Aceptada { color: #10b981; }
-        .status-badge.Rechazada { color: #ef4444; }
+        .status-badge.Aceptada, .status-badge.aceptada, .status-badge.ACEPTADA { color: #10b981; background: #bbf7d0; }
+        .status-badge.Rechazada, .status-badge.rechazada, .status-badge.RECHAZADA { color: #ef4444; background: #fecaca; }
     </style>
 </head>
 <body>
@@ -52,12 +55,12 @@
     </div>
 
     <script>
-        // 📢 PEGA AQUÍ TU NUEVA URL DE GOOGLE APPS SCRIPT
+        // 📢 RECUERDA: PEGA AQUÍ TU URL GENERADA DE GOOGLE APPS SCRIPT
         const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec";
 
         function cargarReservas() {
             const contenedor = document.getElementById('contenedorReservas');
-            contenedor.innerHTML = "<p>Cargando el libro de reservas...</p>";
+            contenedor.innerHTML = "<p>Sincronizando con Google Sheets...</p>";
 
             fetch(`${URL_EMISORA_GOOGLE}?action=leerReservas`)
                 .then(res => res.json())
@@ -68,25 +71,34 @@
                         return;
                     }
 
+                    // Las pendientes se muestran arriba del todo obligatoriamente
                     reservas.sort((a, b) => {
-                        if (a.estado === "Pendiente" && b.estado !== "Pendiente") return -1;
-                        if (a.estado !== "Pendiente" && b.estado === "Pendiente") return 1;
+                        let estA = (a.estado || "Pendiente").trim().toLowerCase();
+                        let estB = (b.estado || "Pendiente").trim().toLowerCase();
+                        if (estA === "pendiente" && estB !== "pendiente") return -1;
+                        if (estA !== "pendiente" && estB === "pendiente") return 1;
                         return 0;
                     });
 
                     reservas.forEach(res => {
                         const card = document.createElement('div');
-                        card.className = `card ${res.estado}`;
+                        // Normalizamos el texto del estado para evitar fallos de mayúsculas
+                        let estadoLimpio = (res.estado || "Pendiente").trim();
+                        let estadoMinuscula = estadoLimpio.toLowerCase();
+                        
+                        card.className = `card ${estadoLimpio}`;
 
-                        let zonaBotones = `
-                            <div class="actions">
-                                <button class="btn btn-accept" onclick="cambiarEstado(${res.id}, 'Aceptada')">Aceptar</button>
-                                <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Rechazar</button>
-                            </div>
-                        `;
-
-                        if (res.estado !== "Pendiente") {
-                            zonaBotones = `<div class="status-badge ${res.estado}">Mesa ${res.estado}</div>`;
+                        // CONTROL DE FLUJO: Si en la tabla está "Pendiente", muestra botones. Si cambió, muestra el texto fijo.
+                        let zonaBotones = "";
+                        if (estadoMinuscula === "pendiente" || estadoMinuscula === "") {
+                            zonaBotones = `
+                                <div class="actions">
+                                    <button class="btn btn-accept" onclick="cambiarEstado(${res.id}, 'Aceptada')">Aceptar</button>
+                                    <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Rechazar</button>
+                                </div>
+                            `;
+                        } else {
+                            zonaBotones = `<div class="status-badge ${estadoLimpio}">Mesa ${estadoLimpio}</div>`;
                         }
 
                         card.innerHTML = `
@@ -130,5 +142,7 @@
 
         window.onload = cargarReservas;
     </script>
+</body>
+</html>
 </body>
 </html>
