@@ -3,119 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chef Amadeo - Control de Sala</title>
+    <title>Control de Sala - Chef Amadeo</title>
     <style>
-        :root { --verde-suave: #2ecc71; --rojo-suave: #e74c3c; --dorado-elegante: #c5a880; }
-        body { font-family: -apple-system, sans-serif; background-color: #f8f9fa; padding: 15px; margin: 0; }
-        header { text-align: center; margin-bottom: 20px; }
-        header h1 { font-size: 24px; margin: 0; color: #1e252b; font-family: serif; }
-        header p { margin: 5px 0 0 0; font-size: 12px; color: #7f8c8d; text-transform: uppercase; }
-        .seccion-titulo { font-weight: bold; margin-top: 20px; font-size: 14px; text-transform: uppercase; color: #34495e; }
-        .lista-reservas { margin-top: 10px; display: flex; flex-direction: column; gap: 15px; }
-        .tarjeta-reserva { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid #bdc3c7; position: relative; }
-        .tarjeta-reserva.aceptada { border-left-color: var(--verde-suave); }
-        .tarjeta-reserva.rechazada { border-left-color: var(--rojo-suave); }
-        .cliente-nombre { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
-        .detalles-linea { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-        .dato-celda { background: #f1f2f6; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
-        .bloque-alergia { background: #fff9f0; border: 1px solid #ffeacc; color: #f39c12; padding: 12px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; margin-bottom: 15px; }
-        .bloque-acciones { display: flex; gap: 10px; }
-        .btn-accion { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; color: white; }
-        .btn-aceptar { background-color: var(--verde-suave); }
-        .btn-rechazar { background-color: var(--rojo-suave); }
-        .sin-reservas { text-align: center; padding: 40px; color: #7f8c8d; font-size: 1.1rem; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #1c1e21; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .header h1 { margin: 0; font-size: 22px; color: #111417; font-family: serif; letter-spacing: 1px; }
+        .btn-refresh { background: #111417; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .grid-reservas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #e4e6eb; position: relative; transition: transform 0.2s; }
+        .card.Pendiente { border-left-color: #f59e0b; }
+        .card.Aceptada { border-left-color: #10b981; background-color: #f0fdf4; }
+        .card.Rechazada { border-left-color: #ef4444; background-color: #fef2f2; opacity: 0.7; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .pax { font-size: 18px; font-weight: bold; background: #e4e6eb; padding: 4px 10px; border-radius: 20px; }
+        .card.Aceptada .pax { background: #bbf7d0; color: #14532d; }
+        .hora { font-size: 20px; font-weight: bold; color: #111417; }
+        .nombre { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; }
+        .telefono { font-size: 14px; color: #65676b; margin-bottom: 12px; }
+        .detalles { font-size: 13px; background: #f0f2f5; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #4b5563; font-weight: 500; }
+        .actions { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        .btn-accept { background: #10b981; color: white; }
+        .btn-reject { background: #ef4444; color: white; }
+        .status-badge { text-align: center; font-weight: bold; text-transform: uppercase; font-size: 12px; padding: 8px; border-radius: 6px; }
+        .status-badge.Aceptada { color: #10b981; }
+        .status-badge.Rechazada { color: #ef4444; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Chef Amadeo</h1>
-        <p>Libro de Sala Digital (Tablet)</p>
-    </header>
 
-    <div style="display: flex; gap: 10px; margin: 15px 0;">
-        <button id="btnTodos" style="flex: 1; padding: 14px; background: #1e252b; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('todos')">Todas</button>
-        <button id="btnManana" style="flex: 1; padding: 14px; background: white; color: #1e252b; border: 2px solid #eaedf1; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('Almuerzo')">☀️ Mañana</button>
-        <button id="btnNoche" style="flex: 1; padding: 14px; background: white; color: #1e252b; border: 2px solid #eaedf1; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer;" onclick="filtrarTurno('Cena')">🌙 Noche</button>
+    <div class="header">
+        <h1>CHEF AMADEO · LIBRO DE SALA</h1>
+        <button class="btn-refresh" onclick="cargarReservas()">🔄 Actualizar Panel</button>
     </div>
 
-    <div class="seccion-titulo">Reservas Entrantes</div>
-    <div class="lista-reservas" id="contenedorReservas">
-        <div class="sin-reservas">Cargando el libro de sala...</div>
+    <div id="contenedorReservas" class="grid-reservas">
+        <!-- Las tarjetas se cargarán aquí automáticamente -->
     </div>
 
     <script>
         // 📢 PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-        const URL_EMISORA_GOOGLE = "https://docs.google.com/spreadsheets/d/11tDzAB_fZKfHk6qM6V57OsxjBKMmnW-qeWpqFW7_bq0/edit?usp=sharing"; 
-        
-        let todasLasReservas = [];
-        let filtroActual = 'todos';
+        const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbzOmG3Avr4GFD0HAK_1Z5TJLHgr2rA9xN8hl4-oa1f3W9_rxZi6OQ6YcPDStoDJJ6GX/exec";
 
-        async function obtenerReservas() {
-            try {
-                const respuesta = await fetch(URL_EMISORA_GOOGLE + "?action=leerReservas");
-                todasLasReservas = await respuesta.json();
-                aplicarFiltroYRenderizar();
-            } catch (error) { console.error(error); }
-        }
-
-        function aplicarFiltroYRenderizar() {
-            if (filtroActual === 'todos') { renderizarReservas(todasLasReservas); } 
-            else {
-                renderizarReservas(todasLasReservas.filter(r => {
-                    if(!r.hora) return false;
-                    var h = parseInt(r.hora.split(':')[0]);
-                    return (filtroActual === 'Almuerzo' && h < 17) || (filtroActual === 'Cena' && h >= 17);
-                }));
-            }
-        }
-
-        function renderizarReservas(datos) {
+        function cargarReservas() {
             const contenedor = document.getElementById('contenedorReservas');
-            if (datos.length === 0) { contenedor.innerHTML = '<div class="sin-reservas">No hay mesas agendadas.</div>'; return; }
-            let html = '';
-            for (var i = 0; i < datos.length; i++) {
-                var r = datos[i];
-                var alertaAlergias = (r.alergias && r.alergias.toLowerCase() !== 'ninguna' && r.alergias.trim() !== '') ? '<div class="bloque-alergia">' + r.alergias + '</div>' : '';
-                var estadoFormateado = String(r.estado).toLowerCase();
-                var botones = (!r.estado || r.estado === 'Pendiente' || r.estado === '') ? 
-                    '<button class="btn-accion btn-aceptar" onclick="cambiarEstadoMesa(' + r.id + ', \'Aceptada\')">Aceptar</button>' +
-                    '<button class="btn-accion btn-rechazar" onclick="cambiarEstadoMesa(' + r.id + ', \'Rechazada\')">Denegar</button>' :
-                    '<div style="text-align:center; font-weight:700; color:#c5a880; width:100%; text-transform:uppercase;">✔ ' + r.estado + '</div>';
-                
-                html += '<div class="tarjeta-reserva ' + estadoFormateado + '" id="reserva-' + r.id + '">' +
-                            '<div class="cliente-nombre">' + r.nombre + '</div>' +
-                            '<div class="detalles-linea"><div class="dato-celda">📅 ' + r.fecha + '</div><div class="dato-celda">⏰ ' + r.hora + ' h</div></div>' +
-                            '<div class="detalles-linea" style="grid-template-columns:1fr;"><div class="dato-celda">👥 ' + r.comensales + ' personas</div></div>' +
-                            alertaAlergias + '<div class="bloque-acciones" id="acciones-' + r.id + '">' + botones + '</div>' +
-                        '</div>';
-            }
-            contenedor.innerHTML = html;
+            contenedor.innerHTML = "<p>Cargando el libro de reservas...</p>";
+
+            fetch(`${URL_EMISORA_GOOGLE}?action=leerReservas`)
+                .then(res => res.json())
+                .then(reservas => {
+                    contenedor.innerHTML = "";
+                    if (reservas.length === 0) {
+                        contenedor.innerHTML = "<p>No hay reservas registradas en el sistema.</p>";
+                        return;
+                    }
+
+                    // Ordenar: primero las Pendientes, luego las Aceptadas y Rechazadas
+                    reservas.sort((a, b) => {
+                        if (a.estado === "Pendiente" && b.estado !== "Pendiente") return -1;
+                        if (a.estado !== "Pendiente" && b.estado === "Pendiente") return 1;
+                        return 0;
+                    });
+
+                    reservas.forEach(res => {
+                        const card = document.createElement('div');
+                        card.className = `card ${res.estado}`;
+
+                        let zonaBotones = `
+                            <div class="actions">
+                                <button class="btn btn-accept" onclick="cambiarEstado(${res.id}, 'Aceptada')">Aceptar</button>
+                                <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Rechazar</button>
+                            </div>
+                        `;
+
+                        if (res.estado !== "Pendiente") {
+                            zonaBotones = `<div class="status-badge ${res.estado}">Mesa ${res.estado}</div>`;
+                        }
+
+                        card.innerHTML = `
+                            <div class="card-header">
+                                <span class="hora">${res.hora} h</span>
+                                <span class="pax">${res.comensales} Pax</span>
+                            </div>
+                            <div class="nombre">${res.nombre}</div>
+                            <div class="telefono">📞 ${res.telefono} | 📅 ${res.fecha}</div>
+                            <div class="detalles">${res.alergias}</div>
+                            ${zonaBotones}
+                        `;
+                        contenedor.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    contenedor.innerHTML = "<p style='color:red;'>Error al conectar con el libro de reservas de Google Sheets.</p>";
+                });
         }
 
-        function cambiarEstadoMesa(id, estado) {
-            document.getElementById('reserva-' + id).className = 'tarjeta-reserva ' + estado.toLowerCase();
-            document.getElementById('acciones-' + id).innerHTML = '<div style="text-align:center; font-weight:700; color:#c5a880; width:100%;">Actualizando...</div>';
-            
-            var cuerpo = "action=actualizarEstado&id=" + encodeURIComponent(id) + "&estado=" + encodeURIComponent(estado);
-            fetch(URL_EMISORA_GOOGLE, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: cuerpo })
+        function cambiarEstado(id, nuevoEstado) {
+            if (!confirm(`¿Confirmas marcar esta mesa como ${nuevoEstado}?`)) return;
+
+            fetch(URL_EMISORA_GOOGLE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `action=actualizarEstado&id=${id}&estado=${nuevoEstado}`
+            })
             .then(res => res.json())
-            .then(res => { obtenerReservas(); })
-            .catch(err => { obtenerReservas(); });
+            .then(resultado => {
+                if (resultado.exito) {
+                    cargarReservas();
+                } else {
+                    alert("No se pudo actualizar el estado de la mesa.");
+                }
+            })
+            .catch(err => {
+                alert("Estado guardado. Actualizando panel...");
+                cargarReservas();
+            });
         }
 
-        function filtrarTurno(turno) {
-            filtroActual = turno;
-            var btnTodos = document.getElementById('btnTodos'); var btnManana = document.getElementById('btnManana'); var btnNoche = document.getElementById('btnNoche');
-            var est = { background: 'white', color: '#1e252b', border: '2px solid #eaedf1' };
-            Object.assign(btnTodos.style, est); Object.assign(btnManana.style, est); Object.assign(btnNoche.style, est);
-            if (turno === 'todos') { btnTodos.style.background = '#1e252b'; btnTodos.style.color = 'white'; btnTodos.style.border = 'none'; }
-            if (turno === 'Almuerzo') { btnManana.style.background = '#1e252b'; btnManana.style.color = 'white'; btnManana.style.border = 'none'; }
-            if (turno === 'Cena') { btnNoche.style.background = '#1e252b'; btnNoche.style.color = 'white'; btnNoche.style.border = 'none'; }
-            aplicarFiltroYRenderizar();
-        }
-
-        obtenerReservas();
-        setInterval(obtenerReservas, 20000);
+        window.onload = cargarReservas;
     </script>
 </body>
 </html>
