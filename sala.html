@@ -3,170 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Sala - Chef Amadeo</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#111417">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("Service Worker registrado."))
-                .catch(err => console.log("Error Service Worker:", err));
-        }
-    </script>
+    <title>Reservas - Chef Amadeo</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #1c1e21; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .header h1 { margin: 0; font-size: 22px; color: #111417; font-family: serif; letter-spacing: 1px; }
-        .btn-refresh { background: #111417; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .grid-reservas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #e4e6eb; position: relative; transition: transform 0.2s; }
-        
-        /* Colores dinámicos de las tarjetas */
-        .card.Pendiente, .card.pendiente { border-left-color: #f59e0b; }
-        .card.Aceptada, .card.aceptada, .card.ACEPTADA { border-left-color: #10b981; background-color: #f0fdf4; }
-        .card.Rechazada, .card.rechazada, .card.RECHAZADA { border-left-color: #ef4444; background-color: #fef2f2; opacity: 0.7; }
-        .card.En\ Espera, .card.en\ espera, .card.EN\ ESPERA { border-left-color: #2563eb; background-color: #eff6ff; }
-        
-        .card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .pax { font-size: 18px; font-weight: bold; background: #e4e6eb; padding: 4px 10px; border-radius: 20px; }
-        .card.Aceptada .pax, .card.aceptada .pax { background: #bbf7d0; color: #14532d; }
-        .card.En\ Espera .pax, .card.en\ espera .pax { background: #bfdbfe; color: #1e40af; }
-        .hora { font-size: 20px; font-weight: bold; color: #111417; }
-        .nombre { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; }
-        .telefono { font-size: 14px; color: #65676b; margin-bottom: 12px; }
-        
-        /* Estilos para los bloques de cocina y sala */
-        .bloque-detalle { font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-weight: 500; }
-        
-        .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
-        .btn { flex: 1; min-width: 80px; padding: 10px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
-        .btn-accept { background: #10b981; color: white; }
-        .btn-reject { background: #ef4444; color: white; }
-        .btn-waiting { background: #2563eb; color: white; }
-        .status-badge { text-align: center; font-weight: bold; text-transform: uppercase; font-size: 12px; padding: 8px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-top: 15px; }
-        .status-badge.Aceptada { color: #10b981; background: #bbf7d0; }
-        .status-badge.Rechazada { color: #ef4444; background: #fecaca; }
+        :root {
+            --c-principal: #1A2B3C;
+            --c-fondo: #FDF6E3;
+        }
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--c-fondo);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #D1C4AC;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            max-width: 150px;
+        }
+        .grupo {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--c-principal);
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1C4AC;
+            border-radius: 0;
+            box-sizing: border-box;
+            background: #fafafa;
+            font-family: 'Georgia', serif;
+        }
+        button {
+            background: var(--c-principal);
+            color: #FDF6E3;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Georgia', serif;
+        }
+        #mensajeGrupo {
+            display: none;
+            background: #1A2B3C;
+            color: #FDF6E3;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-llamar {
+            background: #D1C4AC;
+            color: #1A2B3C;
+            display: block;
+            padding: 12px;
+            margin-top: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+        }
+        .btn-llamar:hover {
+            background: #c1b396;
+        }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>CHEF AMADEO · LIBRO DE SALA</h1>
-        <button class="btn-refresh" onclick="cargarReservas()">🔄 Actualizar Panel</button>
-    </div>
-
-    <div id="contenedorReservas" class="grid-reservas">
-        <!-- Tarjetas automáticas -->
+    <div class="box">
+        <div class="logo-container">
+            <img src="https://chefamadeo.com/wp-content/uploads/2025/11/logo-amadeo-transp-v.png" alt="Chef Amadeo">
+        </div>
+        <form id="formReserva">
+            <div class="grupo">
+                <label>Nombre</label>
+                <input type="text" name="nombre" required>
+            </div>
+            <div class="grupo">
+                <label>Teléfono</label>
+                <input type="tel" name="telefono" required>
+            </div>
+            <div class="grupo">
+                <label>Fecha</label>
+                <input type="date" id="fecha" name="fecha" required onchange="actualizarHoras()">
+            </div>
+            <div class="grupo">
+                <label>Hora</label>
+                <select id="hora" name="hora" required>
+                    <option value="">Selecciona fecha primero...</option>
+                </select>
+            </div>
+            <div class="grupo">
+                <label>Comensales</label>
+                <input type="number" id="comensales" name="comensales" min="1" required oninput="checkGrupo()">
+            </div>
+            <div id="camposReserva">
+                <div class="grupo">
+                    <label>Sala</label>
+                    <select name="sala" required>
+                        <option value="">Selecciona...</option>
+                        <option value="Interior">Interior</option>
+                        <option value="Terraza">Terraza</option>
+                    </select>
+                </div>
+                <div class="grupo">
+                    <label>Especialidad de Arroz</label>
+                    <select name="arroz">
+                        <option value="Senyoret">Arroz del Senyoret</option>
+                        <option value="Banda">Arroz a Banda</option>
+                        <option value="Negro">Arroz Negro</option>
+                        <option value="Valenciana">Paella Valenciana</option>
+                        <option value="Fideua">Fideuà de Gandia</option>
+                        <option value="Bogavante">Arroz de Bogavante</option>
+                    </select>
+                </div>
+                <div class="grupo">
+                    <label>Alergias</label>
+                    <textarea name="alergias"></textarea>
+                </div>
+                <button type="submit">Reservar Mesa</button>
+            </div>
+            <div id="mensajeGrupo">
+                Para grupos de más de 13 personas, por favor llámanos.
+                <a href="tel:+34962846931" class="btn-llamar">📞 LLAMAR AL 962 84 69 31</a>
+            </div>
+        </form>
     </div>
 
     <script>
-        // 📢 IMPORTANTE: REEMPLAZA ESTO CON TU URL DE GOOGLE APPS SCRIPT REAL
-        const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec";
+        // ⚠️ REEMPLAZA ESTA URL CON LA DE TU WEB APP DE GOOGLE APPS SCRIPT
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec"; // Ejemplo: "https://script.google.com/macros/s/XXXXXX/exec"
 
-        function cargarReservas() {
-            const contenedor = document.getElementById('contenedorReservas');
-            contenedor.innerHTML = "<p>Sincronizando con Google Sheets...</p>";
+        /**
+         * Verifica si el número de comensales es mayor a 13 y muestra/oculta el formulario.
+         */
+        function checkGrupo() {
+            const comensales = document.getElementById('comensales').value;
+            const camposReserva = document.getElementById('camposReserva');
+            const mensajeGrupo = document.getElementById('mensajeGrupo');
 
-            fetch(`${URL_EMISORA_GOOGLE}?action=leerReservas`)
-                .then(res => res.json())
-                .then(reservas => {
-                    contenedor.innerHTML = "";
-                    if (reservas.length === 0) {
-                        contenedor.innerHTML = "<p>No hay reservas registradas en el sistema.</p>";
-                        return;
-                    }
-
-                    // Ordenamos las tarjetas: Pendientes -> En Espera -> Resto
-                    reservas.sort((a, b) => {
-                        let estA = (a.estado || "Pendiente").trim().toLowerCase();
-                        let estB = (b.estado || "Pendiente").trim().toLowerCase();
-                        
-                        if (estA === "pendiente" && estB !== "pendiente") return -1;
-                        if (estA !== "pendiente" && estB === "pendiente") return 1;
-                        if (estA === "en espera" && estB !== "en espera" && estB !== "pendiente") return -1;
-                        if (estA !== "en espera" && estB === "en espera" && estB === "pendiente") return 1;
-                        return 0;
-                    });
-
-                    reservas.forEach(res => {
-                        const card = document.createElement('div');
-                        let estadoLimpio = (res.estado || "Pendiente").trim();
-                        let estadoMinuscula = estadoLimpio.toLowerCase();
-                        
-                        card.className = `card ${estadoLimpio}`;
-
-                        // Generamos los botones según el estado real de la tabla
-                        let zonaBotones = "";
-                        if (estadoMinuscula === "pendiente" || estadoMinuscula === "") {
-                            zonaBotones = `
-                                <div class="actions">
-                                    <button class="btn btn-accept" onclick="cambiarEstado(${res.id}, 'Aceptada')">Aceptar</button>
-                                    <button class="btn btn-waiting" onclick="cambiarEstado(${res.id}, 'En Espera')">Espera</button>
-                                    <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Rechazar</button>
-                                </div>
-                            `;
-                        } else if (estadoMinuscula === "en espera") {
-                            zonaBotones = `
-                                <div class="actions">
-                                    <button class="btn btn-accept" style="flex: 2;" onclick="cambiarEstado(${res.id}, 'Aceptada')">🚀 Aprobar Mesa</button>
-                                    <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Quitar</button>
-                                </div>
-                            `;
-                        } else {
-                            zonaBotones = `<div class="status-badge ${estadoLimpio}">Mesa ${estadoLimpio}</div>`;
-                        }
-
-                        // Pintamos la tarjeta con los campos de Arroz y Alergias completamente separados
-                        card.innerHTML = `
-                            <div class="card-header">
-                                <span class="hora">${res.hora} h</span>
-                                <span class="pax">${res.comensales} Pax</span>
-                            </div>
-                            <div class="nombre">${res.nombre}</div>
-                            <div class="telefono">📞 ${res.telefono} | 📅 ${res.fecha}</div>
-                            
-                            <!-- Bloques de información independientes -->
-                            <div class="bloque-detalle" style="background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5;">
-                                🥘 <b>Arroz encargado:</b> ${res.arroz}
-                            </div>
-                            <div class="bloque-detalle" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2;">
-                                ⚠️ <b>Alergias / Notas:</b> ${res.alergias}
-                            </div>
-                            
-                            ${zonaBotones}
-                        `;
-                        contenedor.appendChild(card);
-                    });
-                })
-                .catch(err => {
-                    contenedor.innerHTML = "<p style='color:red;'>Error al conectar con el libro de reservas de Google Sheets.</p>";
-                });
+            if (comensales > 13) {
+                camposReserva.style.display = 'none';
+                mensajeGrupo.style.display = 'block';
+            } else {
+                camposReserva.style.display = 'block';
+                mensajeGrupo.style.display = 'none';
+            }
         }
 
-        function cambiarEstado(id, nuevoEstado) {
-            if (!confirm(`¿Confirmas cambiar el estado a: ${nuevoEstado}?`)) return;
+        /**
+         * Actualiza las opciones del selector de hora según el día de la semana.
+         */
+        function actualizarHoras() {
+            const fechaInput = document.getElementById('fecha').value;
+            if (!fechaInput) return;
 
-            fetch(URL_EMISORA_GOOGLE, {
+            const fecha = new Date(fechaInput + 'T00:00:00');
+            const diaSemana = fecha.getDay(); // 0=domingo, 1=lunes, etc.
+
+            const selectHora = document.getElementById('hora');
+            selectHora.innerHTML = '<option value="">Selecciona una hora...</option>';
+
+            if (diaSemana === 1) {
+                // Lunes cerrado
+                selectHora.innerHTML = '<option value="">Lunes cerrado</option>';
+                return;
+            }
+
+            // Horarios de almuerzo (todos los días excepto lunes)
+            ["13:00", "13:30", "14:00", "14:30", "15:00"].forEach(hora => {
+                selectHora.add(new Option(hora, hora));
+            });
+
+            // Horarios de cena (jueves a sábado)
+            if (diaSemana >= 4 && diaSemana <= 6) {
+                ["20:00", "20:30", "21:00", "21:30"].forEach(hora => {
+                    selectHora.add(new Option(hora, hora));
+                });
+            }
+        }
+
+        /**
+         * Envía los datos del formulario al backend cuando se hace clic en "Reservar".
+         */
+        document.getElementById('formReserva').onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(URL_SCRIPT, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `action=actualizarEstado&id=${id}&estado=${nuevoEstado}`
+                body: formData
             })
-            .then(res => res.json())
-            .then(resultado => {
-                if (resultado.exito) {
-                    cargarReservas();
+            .then(response => {
+                if (response.ok) {
+                    alert("✅ Reserva solicitada con éxito. ¡Gracias!");
+                    document.getElementById('formReserva').reset();
+                    document.getElementById('hora').innerHTML = '<option value="">Selecciona fecha primero...</option>';
                 } else {
-                    alert("No se pudo actualizar la mesa.");
+                    throw new Error('Error en la reserva');
                 }
             })
-            .catch(err => {
-                cargarReservas();
+            .catch(error => {
+                console.error('Error:', error);
+                alert("❌ Hubo un error al procesar tu reserva. Por favor, inténtalo más tarde o llámanos al 962 84 69 31.");
             });
-        }
-
-        window.onload = cargarReservas;
+        };
     </script>
-</body>
-</html>
 </body>
 </html>
