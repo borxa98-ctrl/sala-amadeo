@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Sala - Chef Amadeo</title>
     <!-- Vinculación de la Aplicación Descargable (PWA) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#111417">
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("Service Worker registrado correctamente."))
-                .catch(err => console.log("Error al registrar Service Worker:", err));
+                .then(() => console.log("Service Worker registrado."))
+                .catch(err => console.log("Error Service Worker:", err));
         }
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Sala - Chef Amadeo</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #1c1e21; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -48,12 +48,12 @@
     </div>
 
     <div id="contenedorReservas" class="grid-reservas">
-        <!-- Las tarjetas se cargarán aquí automáticamente -->
+        <!-- Tarjetas automáticas -->
     </div>
 
     <script>
-        // 📢 PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-        const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbzOmG3Avr4GFD0HAK_1Z5TJLHgr2rA9xN8hl4-oa1f3W9_rxZi6OQ6YcPDStoDJJ6GX/exec";
+        // 📢 PEGA AQUÍ TU NUEVA URL DE GOOGLE APPS SCRIPT
+        const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec";
 
         function cargarReservas() {
             const contenedor = document.getElementById('contenedorReservas');
@@ -68,7 +68,6 @@
                         return;
                     }
 
-                    // Ordenar: primero las Pendientes, luego las Aceptadas y Rechazadas
                     reservas.sort((a, b) => {
                         if (a.estado === "Pendiente" && b.estado !== "Pendiente") return -1;
                         if (a.estado !== "Pendiente" && b.estado === "Pendiente") return 1;
@@ -125,7 +124,6 @@
                 }
             })
             .catch(err => {
-                alert("Estado guardado. Actualizando panel...");
                 cargarReservas();
             });
         }
