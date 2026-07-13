@@ -3,45 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Mesa - Chef Amadeo</title>
+    <title>Reservas - Chef Amadeo</title>
     <style>
-        :root { --c-primario: #1A2B3C; --c-fondo: #f8fafc; }
-        body { font-family: sans-serif; background: var(--c-fondo); padding: 20px; display: flex; justify-content: center; }
-        .box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        :root { 
+            --c-principal: #1A2B3C; 
+            --c-fondo: #FDF6E3; 
+            --c-texto: #1A2B3C; 
+        }
+        body { font-family: 'Georgia', serif; background-color: var(--c-fondo); padding: 20px; display: flex; justify-content: center; }
+        .box { background: white; padding: 30px; border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border: 1px solid #D1C4AC; }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-width: 150px; }
         .grupo { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { background: var(--c-primario); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--c-principal); font-size: 0.9em; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #D1C4AC; border-radius: 0; box-sizing: border-box; background: #fafafa; }
+        button { background: var(--c-principal); color: #FDF6E3; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        #mensajeGrupo { display: none; background: #1A2B3C; color: #FDF6E3; padding: 20px; text-align: center; border-radius: 4px; }
+        .btn-llamar { background: #D1C4AC; color: #1A2B3C; display: block; text-decoration: none; padding: 12px; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>RESERVAS</h2>
+        <div class="logo-container">
+            <img src="https://chefamadeo.com/wp-content/uploads/2025/11/logo-amadeo-transp-v.png" alt="Chef Amadeo">
+        </div>
         <form id="formReserva">
-            <div class="grupo"><label>Nombre</label><input type="text" id="nombre" required></div>
-            <div class="grupo"><label>Teléfono</label><input type="tel" id="telefono" required></div>
-            <div class="grupo"><label>Fecha</label><input type="date" id="fecha" required onchange="actualizarHoras()"></div>
-            <div class="grupo"><label>Hora</label><select id="hora" required><option value="">Selecciona fecha primero...</option></select></div>
-            <div class="grupo"><label>Comensales</label><input type="number" id="comensales" min="1" required></div>
-            <div class="grupo"><label>Arroz</label><select id="arroz"><option value="Ninguno">Ninguno</option><option value="Senyoret">Senyoret</option><option value="Banda">Banda</option><option value="Negro">Negro</option></select></div>
-            <div class="grupo"><label>Alergias</label><textarea id="alergias"></textarea></div>
-            <button type="submit">Solicitar Reserva</button>
+            <div class="grupo"><label>Nombre</label><input type="text" name="nombre" required></div>
+            <div class="grupo"><label>Teléfono</label><input type="tel" name="telefono" required></div>
+            <div class="grupo"><label>Fecha</label><input type="date" id="fecha" name="fecha" required onchange="actualizarHoras()"></div>
+            <div class="grupo"><label>Hora</label><select id="hora" name="hora" required><option value="">Selecciona fecha primero...</option></select></div>
+            <div class="grupo"><label>Comensales</label><input type="number" id="comensales" name="comensales" min="1" required oninput="checkGrupo()"></div>
+            
+            <div id="camposReserva">
+                <div class="grupo">
+                    <label>Arroz / Plato</label>
+                    <select name="arroz">
+                        <option value="Senyoret">Arroz del Senyoret</option>
+                        <option value="Banda">Arroz a Banda</option>
+                        <option value="Negro">Arroz Negro</option>
+                        <option value="Valenciana">Paella Valenciana</option>
+                        <option value="Fideua">Fideuà de Gandia</option>
+                    </select>
+                </div>
+                <div class="grupo"><label>Notas / Alergias</label><textarea name="alergias"></textarea></div>
+                <button type="submit">Reservar Mesa</button>
+            </div>
+
+            <div id="mensajeGrupo">
+                Para grupos de más de 13 personas, por favor llámanos directamente.
+                <a href="tel:+34962846931" class="btn-llamar">📞 LLAMAR AL 962 84 69 31</a>
+            </div>
         </form>
     </div>
+
     <script>
+        function checkGrupo() {
+            const comensales = document.getElementById('comensales').value;
+            document.getElementById('camposReserva').style.display = (comensales > 13) ? 'none' : 'block';
+            document.getElementById('mensajeGrupo').style.display = (comensales > 13) ? 'block' : 'none';
+        }
         function actualizarHoras() {
             const fecha = new Date(document.getElementById('fecha').value + 'T00:00:00');
             const dia = fecha.getDay();
             const select = document.getElementById('hora');
             select.innerHTML = '';
             if (dia === 1) { select.innerHTML = '<option value="">Lunes cerrado</option>'; return; }
-            ["13:00","13:30","14:00","14:30","15:00","15:30"].forEach(h => select.add(new Option(h, h)));
-            if (dia >= 4 && dia <= 6) { ["20:00","20:30","21:00","21:30","22:00"].forEach(h => select.add(new Option(h, h))); }
+            ["13:00","13:30","14:00","14:30","15:00","15:30"].forEach(h => select.add(new Option(h + " h", h)));
+            if (dia >= 4 && dia <= 6) { ["20:00","20:30","21:00","21:30","22:00"].forEach(h => select.add(new Option(h + " h", h))); }
         }
         document.getElementById('formReserva').onsubmit = function(e) {
             e.preventDefault();
             const data = new URLSearchParams(new FormData(e.target));
-            fetch("https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec", {method: 'POST', body: data}).then(() => alert("Reserva enviada"));
+            fetch("https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec", {method: 'POST', body: data}).then(() => alert("Reserva enviada con éxito."));
         }
     </script>
 </body>
