@@ -5,213 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserva de Mesa - Chef Amadeo</title>
     <style>
-        :root {
-            --color-principal: #111417;
-            --color-fondo: #f8fafc;
-            --color-borde: #cbd5e1;
-            --color-texto: #334155;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--color-fondo);
-            color: var(--color-texto);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .contenedor-formulario {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            max-width: 450px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        h2 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: var(--color-principal);
-            font-family: serif;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        .grupo-input {
-            margin-bottom: 18px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-principal);
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid var(--color-borde);
-            border-radius: 8px;
-            font-size: 15px;
-            box-sizing: border-box;
-            background-color: #ffffff;
-            color: var(--color-texto);
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--color-principal);
-        }
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-        .fila-doble {
-            display: flex;
-            gap: 15px;
-        }
-        .fila-doble .grupo-input {
-            flex: 1;
-        }
-        .btn-enviar {
-            background-color: var(--color-principal);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: opacity 0.2s;
-        }
-        .btn-enviar:hover {
-            opacity: 0.9;
-        }
+        :root { --c-primario: #1A2B3C; --c-fondo: #f8fafc; }
+        body { font-family: sans-serif; background: var(--c-fondo); padding: 20px; display: flex; justify-content: center; }
+        .box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .grupo { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { background: var(--c-primario); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div class="contenedor-formulario">
-        <h2>CHEF AMADEO · RESERVAS</h2>
-        
+    <div class="box">
+        <h2>RESERVAS</h2>
         <form id="formReserva">
-            <div class="grupo-input">
-                <label for="nombre">Nombre Completo</label>
-                <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
-            </div>
-
-            <div class="grupo-input">
-                <label for="telefono">Teléfono de Contacto</label>
-                <input type="tel" id="telefono" placeholder="Ej. 600123456" required>
-            </div>
-
-            <div class="fila-doble">
-                <div class="grupo-input">
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" required>
-                </div>
-                <div class="grupo-input">
-                    <label for="hora">Hora</label>
-                    <select id="hora" required>
-                        <option value="">Selecciona...</option>
-                        <option value="13:00">13:00 h</option>
-                        <option value="13:30">13:30 h</option>
-                        <option value="14:00">14:00 h</option>
-                        <option value="14:30">14:30 h</option>
-                        <option value="15:00">15:00 h</option>
-                        <option value="20:30">20:30 h</option>
-                        <option value="21:00">21:00 h</option>
-                        <option value="21:30">21:30 h</option>
-                        <option value="22:00">22:00 h</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grupo-input">
-                <label for="comensales">Número de Personas</label>
-                <input type="number" id="comensales" min="1" max="20" placeholder="¿Cuántos venís?" required>
-            </div>
-
-            <!-- Selector Exclusivo para el encargo de Cocina -->
-            <div class="grupo-input">
-                <label for="arroz">Encargo de Arroz (Opcional)</label>
-                <select id="arroz">
-                    <option value="Ninguno">No deseo encargar arroz ahora</option>
-                    <option value="Arroz del Senyoret">Arroz del Senyoret</option>
-                    <option value="Arroz a Banda">Arroz a Banda</option>
-                    <option value="Paella Valenciana">Paella Valenciana</option>
-                    <option value="Arroz Negro">Arroz Negro</option>
-                    <option value="Fideuà de Gandia">Fideuà de Gandia</option>
-                </select>
-            </div>
-
-            <!-- Caja Exclusiva para Sala / Alérgenos -->
-            <div class="grupo-input">
-                <label for="alergias">Alergias, intolerancias o comentarios</label>
-                <textarea id="alergias" placeholder="Ej. Un celíaco, trona para bebé, mesa en terraza..."></textarea>
-            </div>
-
-            <button type="submit" class="btn-enviar">Solicitar Reserva</button>
+            <div class="grupo"><label>Nombre</label><input type="text" id="nombre" required></div>
+            <div class="grupo"><label>Teléfono</label><input type="tel" id="telefono" required></div>
+            <div class="grupo"><label>Fecha</label><input type="date" id="fecha" required onchange="actualizarHoras()"></div>
+            <div class="grupo"><label>Hora</label><select id="hora" required><option value="">Selecciona fecha primero...</option></select></div>
+            <div class="grupo"><label>Comensales</label><input type="number" id="comensales" min="1" required></div>
+            <div class="grupo"><label>Arroz</label><select id="arroz"><option value="Ninguno">Ninguno</option><option value="Senyoret">Senyoret</option><option value="Banda">Banda</option><option value="Negro">Negro</option></select></div>
+            <div class="grupo"><label>Alergias</label><textarea id="alergias"></textarea></div>
+            <button type="submit">Solicitar Reserva</button>
         </form>
     </div>
-
     <script>
-        document.getElementById('formReserva').addEventListener('submit', function(e) {
+        function actualizarHoras() {
+            const fecha = new Date(document.getElementById('fecha').value + 'T00:00:00');
+            const dia = fecha.getDay();
+            const select = document.getElementById('hora');
+            select.innerHTML = '';
+            if (dia === 1) { select.innerHTML = '<option value="">Lunes cerrado</option>'; return; }
+            ["13:00","13:30","14:00","14:30","15:00","15:30"].forEach(h => select.add(new Option(h, h)));
+            if (dia >= 4 && dia <= 6) { ["20:00","20:30","21:00","21:30","22:00"].forEach(h => select.add(new Option(h, h))); }
+        }
+        document.getElementById('formReserva').onsubmit = function(e) {
             e.preventDefault();
-            
-            // 📢 IMPORTANTE: Pega aquí la URL de tu Google Apps Script
-            const URL_SERVIDOR_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec"; 
-            
-            if (URL_SERVIDOR_GOOGLE === "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec") {
-                alert("Por favor, configura la URL real de tu Google Apps Script en el código.");
-                return;
-            }
-
-            const btnSubmit = e.target.querySelector('.btn-enviar');
-            btnSubmit.innerText = "Procesando...";
-            btnSubmit.disabled = true;
-            
-            // Recopilamos los datos del cliente de forma independiente
-            const datosFormulario = new URLSearchParams();
-            datosFormulario.append('nombre', document.getElementById('nombre').value);
-            datosFormulario.append('telefono', document.getElementById('telefono').value);
-            datosFormulario.append('fecha', document.getElementById('fecha').value);
-            datosFormulario.append('hora', document.getElementById('hora').value);
-            datosFormulario.append('comensales', document.getElementById('comensales').value);
-            
-            // Enviamos arroz y alergias totalmente separados
-            datosFormulario.append('arroz', document.getElementById('arroz').value || "Ninguno");
-            datosFormulario.append('alergias', document.getElementById('alergias').value || "Ninguna");
-            datosFormulario.append('espera', 'Pendiente'); 
-
-            // Envío al servidor
-            fetch(URL_SERVIDOR_GOOGLE, {
-                method: 'POST',
-                body: datosFormulario,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-            .then(res => res.json())
-            .then(resultado => {
-                if(resultado.exito) {
-                    alert('¡Solicitud enviada! Su reserva ha quedado registrada y está pendiente de confirmación.');
-                    document.getElementById('formReserva').reset();
-                } else {
-                    alert('Error en el sistema: ' + resultado.mensaje);
-                }
-            })
-            .catch(err => {
-                alert('Error de conexión con el libro de reservas del restaurante.');
-            })
-            .finally(() => {
-                btnSubmit.innerText = "Solicitar Reserva";
-                btnSubmit.disabled = false;
-            });
-        });
+            const data = new URLSearchParams(new FormData(e.target));
+            fetch("https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec", {method: 'POST', body: data}).then(() => alert("Reserva enviada"));
+        }
     </script>
 </body>
 </html>
