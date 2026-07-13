@@ -3,118 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservas - Chef Amadeo</title>
+    <title>Reserva de Mesa - Chef Amadeo</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #fcfbfa; color: #1e252b; margin: 0; padding: 0; }
-        .main-container { max-width: 550px; margin: 0 auto; background: #ffffff; min-height: 100vh; padding: 40px 25px; box-sizing: border-box; }
-        .header-brand { text-align: center; margin-bottom: 35px; }
-        .header-brand h1 { font-family: serif; font-size: 28px; letter-spacing: 2px; margin: 0 0 5px 0; color: #1e252b; }
-        .header-brand p { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #718096; margin: 0; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.5px; color: #2d3748; }
-        .form-control { width: 100%; padding: 12px 14px; box-sizing: border-box; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 15px; background-color: #f7fafc; color: #1e252b; }
-        .form-control:focus { outline: none; border-color: #cbd5e0; background-color: #fff; }
-        .btn-submit { width: 100%; padding: 15px; background: #111417; border: none; color: white; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; font-size: 14px; cursor: pointer; margin-top: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background 0.2s ease; }
-        .btn-submit:hover { background: #2d3748; }
-        .btn-submit:disabled { background: #a0aec0; cursor: not-allowed; }
+        :root {
+            --color-principal: #111417;
+            --color-fondo: #f8fafc;
+            --color-borde: #cbd5e1;
+            --color-texto: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .contenedor-formulario {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            max-width: 450px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--color-principal);
+            font-family: serif;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+        .grupo-input {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-principal);
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid var(--color-borde);
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            color: var(--color-texto);
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-principal);
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        .fila-doble {
+            display: flex;
+            gap: 15px;
+        }
+        .fila-doble .grupo-input {
+            flex: 1;
+        }
+        .btn-enviar {
+            background-color: var(--color-principal);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+        .btn-enviar:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="header-brand">
-            <h1>CHEF AMADEO</h1>
-            <p>RESERVAS ONLINE · PLAYA DE GANDIA</p>
-        </div>
-        <form id="reservationForm">
-            <div class="form-group">
-                <label>NOMBRE Y APELLIDOS</label>
-                <input type="text" id="nombre" class="form-control" placeholder="Introduce tu nombre completo" required>
+
+    <div class="contenedor-formulario">
+        <h2>CHEF AMADEO · RESERVAS</h2>
+        
+        <form id="formReserva">
+            <div class="grupo-input">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
             </div>
-            <div class="form-group">
-                <label>TELÉFONO DE CONTACTO</label>
-                <input type="tel" id="telefono" class="form-control" placeholder="Ej. +34 642570810" required>
+
+            <div class="grupo-input">
+                <label for="telefono">Teléfono de Contacto</label>
+                <input type="tel" id="telefono" placeholder="Ej. 600123456" required>
             </div>
-            <div class="form-group">
-                <label>FECHA DE LA RESERVA</label>
-                <input type="date" id="fecha" class="form-control" required>
+
+            <div class="fila-doble">
+                <div class="grupo-input">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" required>
+                </div>
+                <div class="grupo-input">
+                    <label for="hora">Hora</label>
+                    <select id="hora" required>
+                        <option value="">Selecciona...</option>
+                        <option value="13:00">13:00 h</option>
+                        <option value="13:30">13:30 h</option>
+                        <option value="14:00">14:00 h</option>
+                        <option value="14:30">14:30 h</option>
+                        <option value="15:00">15:00 h</option>
+                        <option value="20:30">20:30 h</option>
+                        <option value="21:00">21:00 h</option>
+                        <option value="21:30">21:30 h</option>
+                        <option value="22:00">22:00 h</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label>HORA DE LLEGADA</label>
-                <select id="hora" class="form-control" required>
-                    <option value="" disabled selected hidden>Selecciona una hora...</option>
-                    <option value="13:30">13:30</option> <option value="14:00">14:00</option>
-                    <option value="14:30">14:30</option> <option value="15:00">15:00</option>
-                    <option value="20:30">20:30</option> <option value="21:00">21:00</option>
-                    <option value="21:30">21:30</option> <option value="22:00">22:00</option>
-                </select>
+
+            <div class="grupo-input">
+                <label for="comensales">Número de Personas</label>
+                <input type="number" id="comensales" min="1" max="20" placeholder="¿Cuántos venís?" required>
             </div>
-            <div class="form-group">
-                <label>NÚMERO DE COMENSALES</label>
-                <select id="comensales" class="form-control" required>
-                    <option value="" disabled selected hidden>Selecciona cuántos sois...</option>
-                    <option value="2">2 personas</option> <option value="3">3 personas</option>
-                    <option value="4">4 personas</option> <option value="5">5 personas</option>
-                    <option value="6">6 personas</option> <option value="Más de 6">Más de 6 personas</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>ESPECIALIDAD DE ARROZ A ENCARGAR</label>
-                <select id="arroz" class="form-control">
-                    <option value="Ninguno" selected>No deseo encargar arroz ahora</option>
-                    <option value="Paella Valenciana">Paella Valenciana</option>
+
+            <!-- Selector Exclusivo para el encargo de Cocina -->
+            <div class="grupo-input">
+                <label for="arroz">Encargo de Arroz (Opcional)</label>
+                <select id="arroz">
+                    <option value="Ninguno">No deseo encargar arroz ahora</option>
                     <option value="Arroz del Senyoret">Arroz del Senyoret</option>
                     <option value="Arroz a Banda">Arroz a Banda</option>
+                    <option value="Paella Valenciana">Paella Valenciana</option>
+                    <option value="Arroz Negro">Arroz Negro</option>
                     <option value="Fideuà de Gandia">Fideuà de Gandia</option>
                 </select>
             </div>
-            <button type="submit" id="btnSubmit" class="btn-submit">Confirmar Reserva</button>
+
+            <!-- Caja Exclusiva para Sala / Alérgenos -->
+            <div class="grupo-input">
+                <label for="alergias">Alergias, intolerancias o comentarios</label>
+                <textarea id="alergias" placeholder="Ej. Un celíaco, trona para bebé, mesa en terraza..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-enviar">Solicitar Reserva</button>
         </form>
     </div>
 
     <script>
-        // 📢 PEGA AQUÍ LA URL DE TU NUEVO DESPLIEGUE
-        const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec";
-
-        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+        document.getElementById('formReserva').addEventListener('submit', function(e) {
             e.preventDefault();
-            var btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            btn.innerText = "PROCESANDO...";
-
-            var datos = {
-                nombre: document.getElementById('nombre').value,
-                telefono: document.getElementById('telefono').value,
-                fecha: document.getElementById('fecha').value,
-                hora: document.getElementById('hora').value,
-                comensales: document.getElementById('comensales').value,
-                arroz: document.getElementById('arroz').value,
-                alergias: "Ninguna",
-                espera: "Pendiente"
-            };
-
-            var formBody = [];
-            for (var property in datos) {
-                formBody.push(encodeURIComponent(property) + "=" + encodeURIComponent(datos[property]));
+            
+            // 📢 IMPORTANTE: Pega aquí la URL de tu Google Apps Script
+            const URL_SERVIDOR_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec"; 
+            
+            if (URL_SERVIDOR_GOOGLE === "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec") {
+                alert("Por favor, configura la URL real de tu Google Apps Script en el código.");
+                return;
             }
-            formBody = formBody.join("&");
 
-            fetch(URL_GOOGLE, {
+            const btnSubmit = e.target.querySelector('.btn-enviar');
+            btnSubmit.innerText = "Procesando...";
+            btnSubmit.disabled = true;
+            
+            // Recopilamos los datos del cliente de forma independiente
+            const datosFormulario = new URLSearchParams();
+            datosFormulario.append('nombre', document.getElementById('nombre').value);
+            datosFormulario.append('telefono', document.getElementById('telefono').value);
+            datosFormulario.append('fecha', document.getElementById('fecha').value);
+            datosFormulario.append('hora', document.getElementById('hora').value);
+            datosFormulario.append('comensales', document.getElementById('comensales').value);
+            
+            // Enviamos arroz y alergias totalmente separados
+            datosFormulario.append('arroz', document.getElementById('arroz').value || "Ninguno");
+            datosFormulario.append('alergias', document.getElementById('alergias').value || "Ninguna");
+            datosFormulario.append('espera', 'Pendiente'); 
+
+            // Envío al servidor
+            fetch(URL_SERVIDOR_GOOGLE, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formBody
+                body: datosFormulario,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
             .then(res => res.json())
             .then(resultado => {
                 if(resultado.exito) {
-                    alert("¡Reserva enviada! Espera la confirmación de la sala.");
-                    document.getElementById('reservationForm').reset();
-                } else { alert("Error del servidor: " + resultado.mensaje); }
+                    alert('¡Solicitud enviada! Su reserva ha quedado registrada y está pendiente de confirmación.');
+                    document.getElementById('formReserva').reset();
+                } else {
+                    alert('Error en el sistema: ' + resultado.mensaje);
+                }
             })
-            .catch(err => { 
-                alert("¡Petición enviada! Tu reserva está procesándose en el sistema.");
-                document.getElementById('reservationForm').reset();
+            .catch(err => {
+                alert('Error de conexión con el libro de reservas del restaurante.');
             })
-            .finally(() => { btn.disabled = false; btn.innerText = "Confirmar Reserva"; });
+            .finally(() => {
+                btnSubmit.innerText = "Solicitar Reserva";
+                btnSubmit.disabled = false;
+            });
         });
     </script>
 </body>
