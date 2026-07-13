@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Sala - Chef Amadeo</title>
-    <!-- Vinculación de la Aplicación Descargable (PWA) -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#111417">
     <script>
@@ -22,25 +21,31 @@
         .grid-reservas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #e4e6eb; position: relative; transition: transform 0.2s; }
         
-        /* Colores dinámicos según el estado exacto de la tabla */
+        /* Colores dinámicos de las tarjetas */
         .card.Pendiente, .card.pendiente { border-left-color: #f59e0b; }
         .card.Aceptada, .card.aceptada, .card.ACEPTADA { border-left-color: #10b981; background-color: #f0fdf4; }
         .card.Rechazada, .card.rechazada, .card.RECHAZADA { border-left-color: #ef4444; background-color: #fef2f2; opacity: 0.7; }
+        .card.En\ Espera, .card.en\ espera, .card.EN\ ESPERA { border-left-color: #2563eb; background-color: #eff6ff; }
         
         .card-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
         .pax { font-size: 18px; font-weight: bold; background: #e4e6eb; padding: 4px 10px; border-radius: 20px; }
-        .card.Aceptada .pax, .card.aceptada .pax, .card.ACEPTADA .pax { background: #bbf7d0; color: #14532d; }
+        .card.Aceptada .pax, .card.aceptada .pax { background: #bbf7d0; color: #14532d; }
+        .card.En\ Espera .pax, .card.en\ espera .pax { background: #bfdbfe; color: #1e40af; }
         .hora { font-size: 20px; font-weight: bold; color: #111417; }
         .nombre { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; }
         .telefono { font-size: 14px; color: #65676b; margin-bottom: 12px; }
-        .detalles { font-size: 13px; background: #f0f2f5; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #4b5563; font-weight: 500; }
-        .actions { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        
+        /* Estilos para los bloques de cocina y sala */
+        .bloque-detalle { font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-weight: 500; }
+        
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px; }
+        .btn { flex: 1; min-width: 80px; padding: 10px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
         .btn-accept { background: #10b981; color: white; }
         .btn-reject { background: #ef4444; color: white; }
-        .status-badge { text-align: center; font-weight: bold; text-transform: uppercase; font-size: 12px; padding: 8px; border-radius: 6px; }
-        .status-badge.Aceptada, .status-badge.aceptada, .status-badge.ACEPTADA { color: #10b981; background: #bbf7d0; }
-        .status-badge.Rechazada, .status-badge.rechazada, .status-badge.RECHAZADA { color: #ef4444; background: #fecaca; }
+        .btn-waiting { background: #2563eb; color: white; }
+        .status-badge { text-align: center; font-weight: bold; text-transform: uppercase; font-size: 12px; padding: 8px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-top: 15px; }
+        .status-badge.Aceptada { color: #10b981; background: #bbf7d0; }
+        .status-badge.Rechazada { color: #ef4444; background: #fecaca; }
     </style>
 </head>
 <body>
@@ -55,7 +60,7 @@
     </div>
 
     <script>
-        // 📢 RECUERDA: PEGA AQUÍ TU URL GENERADA DE GOOGLE APPS SCRIPT
+        // 📢 IMPORTANTE: REEMPLAZA ESTO CON TU URL DE GOOGLE APPS SCRIPT REAL
         const URL_EMISORA_GOOGLE = "https://script.google.com/macros/s/AKfycbz9PQYlsVfJqZaCMCZSOSm9Zu_KosWENH5ZOI40S-H1hmluWXTs1xaMf8t80fQ12Dd4Rg/exec";
 
         function cargarReservas() {
@@ -71,36 +76,47 @@
                         return;
                     }
 
-                    // Las pendientes se muestran arriba del todo obligatoriamente
+                    // Ordenamos las tarjetas: Pendientes -> En Espera -> Resto
                     reservas.sort((a, b) => {
                         let estA = (a.estado || "Pendiente").trim().toLowerCase();
                         let estB = (b.estado || "Pendiente").trim().toLowerCase();
+                        
                         if (estA === "pendiente" && estB !== "pendiente") return -1;
                         if (estA !== "pendiente" && estB === "pendiente") return 1;
+                        if (estA === "en espera" && estB !== "en espera" && estB !== "pendiente") return -1;
+                        if (estA !== "en espera" && estB === "en espera" && estB === "pendiente") return 1;
                         return 0;
                     });
 
                     reservas.forEach(res => {
                         const card = document.createElement('div');
-                        // Normalizamos el texto del estado para evitar fallos de mayúsculas
                         let estadoLimpio = (res.estado || "Pendiente").trim();
                         let estadoMinuscula = estadoLimpio.toLowerCase();
                         
                         card.className = `card ${estadoLimpio}`;
 
-                        // CONTROL DE FLUJO: Si en la tabla está "Pendiente", muestra botones. Si cambió, muestra el texto fijo.
+                        // Generamos los botones según el estado real de la tabla
                         let zonaBotones = "";
                         if (estadoMinuscula === "pendiente" || estadoMinuscula === "") {
                             zonaBotones = `
                                 <div class="actions">
                                     <button class="btn btn-accept" onclick="cambiarEstado(${res.id}, 'Aceptada')">Aceptar</button>
+                                    <button class="btn btn-waiting" onclick="cambiarEstado(${res.id}, 'En Espera')">Espera</button>
                                     <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Rechazar</button>
+                                </div>
+                            `;
+                        } else if (estadoMinuscula === "en espera") {
+                            zonaBotones = `
+                                <div class="actions">
+                                    <button class="btn btn-accept" style="flex: 2;" onclick="cambiarEstado(${res.id}, 'Aceptada')">🚀 Aprobar Mesa</button>
+                                    <button class="btn btn-reject" onclick="cambiarEstado(${res.id}, 'Rechazada')">Quitar</button>
                                 </div>
                             `;
                         } else {
                             zonaBotones = `<div class="status-badge ${estadoLimpio}">Mesa ${estadoLimpio}</div>`;
                         }
 
+                        // Pintamos la tarjeta con los campos de Arroz y Alergias completamente separados
                         card.innerHTML = `
                             <div class="card-header">
                                 <span class="hora">${res.hora} h</span>
@@ -108,7 +124,15 @@
                             </div>
                             <div class="nombre">${res.nombre}</div>
                             <div class="telefono">📞 ${res.telefono} | 📅 ${res.fecha}</div>
-                            <div class="detalles">${res.alergias}</div>
+                            
+                            <!-- Bloques de información independientes -->
+                            <div class="bloque-detalle" style="background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5;">
+                                🥘 <b>Arroz encargado:</b> ${res.arroz}
+                            </div>
+                            <div class="bloque-detalle" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2;">
+                                ⚠️ <b>Alergias / Notas:</b> ${res.alergias}
+                            </div>
+                            
                             ${zonaBotones}
                         `;
                         contenedor.appendChild(card);
@@ -120,7 +144,7 @@
         }
 
         function cambiarEstado(id, nuevoEstado) {
-            if (!confirm(`¿Confirmas marcar esta mesa como ${nuevoEstado}?`)) return;
+            if (!confirm(`¿Confirmas cambiar el estado a: ${nuevoEstado}?`)) return;
 
             fetch(URL_EMISORA_GOOGLE, {
                 method: 'POST',
@@ -132,7 +156,7 @@
                 if (resultado.exito) {
                     cargarReservas();
                 } else {
-                    alert("No se pudo actualizar el estado de la mesa.");
+                    alert("No se pudo actualizar la mesa.");
                 }
             })
             .catch(err => {
